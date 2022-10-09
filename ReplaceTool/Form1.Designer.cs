@@ -37,9 +37,9 @@ namespace ReplaceTool
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.htmlTextOutPutBox = new System.Windows.Forms.RichTextBox();
+            this.OutPutTextBox = new System.Windows.Forms.RichTextBox();
             this.panel4 = new ReaLTaiizor.Controls.Panel();
-            this.htmlTextBox = new System.Windows.Forms.RichTextBox();
+            this.InputTextBox = new System.Windows.Forms.RichTextBox();
             this.toolbarGenerate = new ReaLTaiizor.Controls.TabPage();
             this.常用工具 = new System.Windows.Forms.TabPage();
             this.label4 = new System.Windows.Forms.Label();
@@ -89,7 +89,7 @@ namespace ReplaceTool
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(130)))), ((int)(((byte)(146)))));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
             this.panel1.Controls.Add(this.iconButton1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -137,7 +137,7 @@ namespace ReplaceTool
             // panel5
             // 
             this.panel5.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.panel5.Controls.Add(this.htmlTextOutPutBox);
+            this.panel5.Controls.Add(this.OutPutTextBox);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel5.Location = new System.Drawing.Point(469, 0);
             this.panel5.Name = "panel5";
@@ -145,22 +145,22 @@ namespace ReplaceTool
             this.panel5.Size = new System.Drawing.Size(503, 338);
             this.panel5.TabIndex = 12;
             // 
-            // htmlTextOutPutBox
+            // OutPutTextBox
             // 
-            this.htmlTextOutPutBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.htmlTextOutPutBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.htmlTextOutPutBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.htmlTextOutPutBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.htmlTextOutPutBox.Location = new System.Drawing.Point(5, 5);
-            this.htmlTextOutPutBox.Name = "htmlTextOutPutBox";
-            this.htmlTextOutPutBox.Size = new System.Drawing.Size(493, 328);
-            this.htmlTextOutPutBox.TabIndex = 10;
-            this.htmlTextOutPutBox.Text = "";
+            this.OutPutTextBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.OutPutTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.OutPutTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OutPutTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.OutPutTextBox.Location = new System.Drawing.Point(5, 5);
+            this.OutPutTextBox.Name = "OutPutTextBox";
+            this.OutPutTextBox.Size = new System.Drawing.Size(493, 328);
+            this.OutPutTextBox.TabIndex = 10;
+            this.OutPutTextBox.Text = "";
             // 
             // panel4
             // 
             this.panel4.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.panel4.Controls.Add(this.htmlTextBox);
+            this.panel4.Controls.Add(this.InputTextBox);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel4.EdgeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(41)))), ((int)(((byte)(50)))));
             this.panel4.Location = new System.Drawing.Point(0, 0);
@@ -171,18 +171,18 @@ namespace ReplaceTool
             this.panel4.TabIndex = 11;
             this.panel4.Text = "panel4";
             // 
-            // htmlTextBox
+            // InputTextBox
             // 
-            this.htmlTextBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.htmlTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.htmlTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.htmlTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.htmlTextBox.Location = new System.Drawing.Point(5, 5);
-            this.htmlTextBox.Name = "htmlTextBox";
-            this.htmlTextBox.Size = new System.Drawing.Size(458, 328);
-            this.htmlTextBox.TabIndex = 9;
-            this.htmlTextBox.Text = "";
-            this.htmlTextBox.TextChanged += new System.EventHandler(this.htmlTextBox_TextChanged);
+            this.InputTextBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.InputTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.InputTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InputTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.InputTextBox.Location = new System.Drawing.Point(5, 5);
+            this.InputTextBox.Name = "InputTextBox";
+            this.InputTextBox.Size = new System.Drawing.Size(458, 328);
+            this.InputTextBox.TabIndex = 9;
+            this.InputTextBox.Text = "";
+            this.InputTextBox.TextChanged += new System.EventHandler(this.htmlTextBox_TextChanged);
             // 
             // toolbarGenerate
             // 
@@ -618,8 +618,8 @@ namespace ReplaceTool
         private ReaLTaiizor.Controls.AirButton GenerateToolBarTextBtn;
         private System.Windows.Forms.Panel panel2;
         private FontAwesome.Sharp.IconButton iconButton1;
-        private System.Windows.Forms.RichTextBox htmlTextBox;
-        private System.Windows.Forms.RichTextBox htmlTextOutPutBox;
+        private System.Windows.Forms.RichTextBox InputTextBox;
+        private System.Windows.Forms.RichTextBox OutPutTextBox;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel5;
         private ReaLTaiizor.Controls.Panel panel4;

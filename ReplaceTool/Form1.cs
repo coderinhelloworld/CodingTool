@@ -76,7 +76,7 @@ namespace ReplaceTool
 
             if (!string.IsNullOrEmpty(setting.Input))
             {
-                htmlTextBox.Text = setting.Input;
+                InputTextBox.Text = setting.Input;
             }
             var count = 0;
             foreach (var settingItem in setting.SettingItems)
@@ -113,7 +113,7 @@ namespace ReplaceTool
                 SettingItems = new List<SettingItem>()
             };
             setting.Name = SettingNameBox.Text;
-            setting.Input = htmlTextBox.Text;
+            setting.Input = InputTextBox.Text;
             var res = dataGridView1.Rows;
             for (int i = 0; i < dataGridView1.RowCount - 1; i++)
             {
@@ -126,19 +126,11 @@ namespace ReplaceTool
 
         }
 
-        private void ReplaceBtn_Click(object sender, EventArgs e)
-        {
-
-
-        }
-
-
-
         private void button1_Click(object sender, EventArgs e)
         {
 
 
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var sqlString = inputText.Split('[')[0];
             var paramList = inputText.Split('[')[1].Replace("]", "").Split('，');
 
@@ -148,7 +140,7 @@ namespace ReplaceTool
                 sqlString = sqlString.Replace("@p" + count, "'" + item + "'");
                 count++;
             }
-            htmlTextOutPutBox.Text = sqlString;
+            OutPutTextBox.Text = sqlString;
         }
 
         /// <summary>
@@ -158,7 +150,7 @@ namespace ReplaceTool
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var sb = new StringBuilder();
             var textList = inputText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             foreach (var item in textList)
@@ -166,7 +158,7 @@ namespace ReplaceTool
                 sb.AppendLine(item.ToPascal());
 
             }
-            htmlTextOutPutBox.Text = sb.ToString();
+            OutPutTextBox.Text = sb.ToString();
         }
         public static string FirstCharToUpper(string input)
         {
@@ -182,7 +174,7 @@ namespace ReplaceTool
         /// <param name="e"></param>
         private void AddItSelf_Click(object sender, EventArgs e)
         {
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var fromNumber = Convert.ToInt32(fromNumberBox.Text);
             var toNumber = Convert.ToInt32(toNumberBox.Text);
             var outputStr = inputText;
@@ -190,13 +182,13 @@ namespace ReplaceTool
             {
                 outputStr += inputText.Replace(fromNumber.ToString(), (i + 1).ToString()) + "\r\n";
             }
-            htmlTextOutPutBox.Text = outputStr;
+            OutPutTextBox.Text = outputStr;
         }
 
         private void contactTxtBtn_Click(object sender, EventArgs e)
         {
             var contText = contactText.Text;
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             inputText = inputText.Replace('\t', ' ').Replace('\n', ' ');
             var str = inputText.Split(' ');
             var sb = new StringBuilder();
@@ -209,20 +201,20 @@ namespace ReplaceTool
             }
             var res = sb.ToString();
             res = res.Substring(0, res.Length - 1);
-            htmlTextOutPutBox.Text = res;
+            OutPutTextBox.Text = res;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var contText = htmlTextBox.Text;
+            var contText = InputTextBox.Text;
             var jsonHelper = new JsonHelper();
-            htmlTextOutPutBox.Text = jsonHelper.GetClassString(contText);
+            OutPutTextBox.Text = jsonHelper.GetClassString(contText);
         }
 
 
         private void propertyGenerateBtn_Click(object sender, EventArgs e)
         {
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var sb = new StringBuilder();
             var textList = inputText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             foreach (var item in textList)
@@ -231,12 +223,12 @@ namespace ReplaceTool
                 sb.AppendLine("public string " + item.ToPascal() + " {get;set;}");
                 sb.AppendLine();
             }
-            htmlTextOutPutBox.Text = sb.ToString();
+            OutPutTextBox.Text = sb.ToString();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var col = int.Parse(colNo.Text);
             var sb = new StringBuilder();
             var textList = inputText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
@@ -255,14 +247,14 @@ namespace ReplaceTool
                 }
 
             }
-            htmlTextOutPutBox.Text = sb.ToString();
+            OutPutTextBox.Text = sb.ToString();
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var res = inputText.Replace("\r\n", "").Replace("\"", "\\\"").Replace(" ", "");
-            htmlTextOutPutBox.Text = res;
+            OutPutTextBox.Text = res;
         }
 
         private void fromNumberBox_TextChanged(object sender, EventArgs e)
@@ -289,7 +281,7 @@ namespace ReplaceTool
 
         private void button7_Click(object sender, EventArgs e)
         {
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             var col = int.Parse(colNo.Text);
             var sb = new StringBuilder();
             var textList = inputText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
@@ -326,7 +318,7 @@ namespace ReplaceTool
                 }
 
             }
-            htmlTextOutPutBox.Text = sb.ToString();
+            OutPutTextBox.Text = sb.ToString();
         }
 
         private void iconButton1_Click(object sender, EventArgs e)
@@ -360,7 +352,7 @@ namespace ReplaceTool
 
         public void GenerateToolBarText()
         {
-            htmlTextOutPutBox.Text = "";
+            OutPutTextBox.Text = "";
             var translateList = new List<Translate>();
             translateList.Add(new Translate() { Key = "查询", Value = "Search" });
             translateList.Add(new Translate() { Key = "新增", Value = "Save" });
@@ -371,7 +363,7 @@ namespace ReplaceTool
             translateList.Add(new Translate() { Key = "导入", Value = "Import" });
             translateList.Add(new Translate() { Key = "详细", Value = "Detail" });
 
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             //匹配toolbar文本内容
             var regStr = @"text:.*?,";
             var m1 = Regex.Matches(inputText, regStr);
@@ -392,8 +384,16 @@ namespace ReplaceTool
                     inputText = inputText.Replace(text, text + $"id: \"{translateRes}\",");
                 }
             }
-            inputText=inputText.Replace(@"$("".lazyLoad"").css(""visibility"", ""visible"")", "regPermission(\"tblData\", 1);$(\".lazyLoad\").css(\"visibility\",\"visible\")");
-            htmlTextOutPutBox.Text = inputText;
+            var tableName = new System.Text.RegularExpressions.Regex(@"\$\(""\#(\w+)""\)").Match(inputText).Value.Replace(@"$(""#","").Replace(@""")","");
+
+
+            var type = 1;
+            if (inputText.Contains("treegrid"))
+            {
+                type = 2;
+            }
+            inputText = inputText.Replace(@"$("".lazyLoad"").css(""visibility"", ""visible"")", $"regPermission(\"{tableName}\", {type}); \r\n     $(\".lazyLoad\").css(\"visibility\",\"visible\")");
+            OutPutTextBox.Text = inputText;
 
         }
 
@@ -423,7 +423,7 @@ namespace ReplaceTool
         private void ReplaceBtn_Click_1(object sender, EventArgs e)
         {
             var settings = GetCurrentSetting();
-            var inputText = htmlTextBox.Text;
+            var inputText = InputTextBox.Text;
             if (inputText.Length > 0)
             {
                 foreach (var setting in settings.SettingItems)
@@ -434,7 +434,7 @@ namespace ReplaceTool
                     }
 
                 }
-                htmlTextOutPutBox.Text = inputText;
+                OutPutTextBox.Text = inputText;
             }
         }
 
@@ -447,7 +447,11 @@ namespace ReplaceTool
             {
                 SetDatagridViewSetting(setting);
             }
-            ReplaceBtn_Click(sender, e);
+            else
+            {
+                InputTextBox.Text = "";
+            }
+            ReplaceBtn_Click_1(sender, e);
         }
 
         private void BtdAddRow_Click_1(object sender, EventArgs e)
