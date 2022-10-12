@@ -74,6 +74,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Helper\AzureTranslateHelper.cs" />
+    <Compile Include="Helper\FileHelper.cs" />
     <Compile Include="Helper\JsonHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,6 +106,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Functions\" />
     <Folder Include="Setting\" />
   </ItemGroup>
   <ItemGroup>

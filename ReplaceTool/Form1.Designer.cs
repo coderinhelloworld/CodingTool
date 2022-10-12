@@ -33,7 +33,7 @@ namespace ReplaceTool
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.iconButton1 = new FontAwesome.Sharp.IconButton();
+            this.CloseBtn = new FontAwesome.Sharp.IconButton();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
@@ -52,6 +52,7 @@ namespace ReplaceTool
             this.propertyGenerateBtn = new System.Windows.Forms.Button();
             this.JsonToClassBtn = new System.Windows.Forms.Button();
             this.ToolBar生成 = new System.Windows.Forms.TabPage();
+            this.AddAuthCodeBtn = new ReaLTaiizor.Controls.AirButton();
             this.GenerateToolBarTextBtn = new ReaLTaiizor.Controls.AirButton();
             this.参数命名 = new System.Windows.Forms.TabPage();
             this.button2 = new System.Windows.Forms.Button();
@@ -73,6 +74,7 @@ namespace ReplaceTool
             this.ConfigDelBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.CheckRegCodeBtn = new ReaLTaiizor.Controls.AirButton();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -90,7 +92,7 @@ namespace ReplaceTool
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
-            this.panel1.Controls.Add(this.iconButton1);
+            this.panel1.Controls.Add(this.CloseBtn);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -98,20 +100,24 @@ namespace ReplaceTool
             this.panel1.TabIndex = 33;
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown_1);
             // 
-            // iconButton1
+            // CloseBtn
             // 
-            this.iconButton1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(43)))), ((int)(((byte)(28)))));
-            this.iconButton1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.iconButton1.IconChar = FontAwesome.Sharp.IconChar.Multiply;
-            this.iconButton1.IconColor = System.Drawing.Color.Black;
-            this.iconButton1.IconFont = FontAwesome.Sharp.IconFont.Auto;
-            this.iconButton1.IconSize = 15;
-            this.iconButton1.Location = new System.Drawing.Point(944, 10);
-            this.iconButton1.Name = "iconButton1";
-            this.iconButton1.Size = new System.Drawing.Size(20, 19);
-            this.iconButton1.TabIndex = 0;
-            this.iconButton1.UseVisualStyleBackColor = true;
-            this.iconButton1.Click += new System.EventHandler(this.iconButton1_Click);
+            this.CloseBtn.BackColor = System.Drawing.Color.Transparent;
+            this.CloseBtn.FlatAppearance.BorderSize = 0;
+            this.CloseBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.CloseBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CloseBtn.IconChar = FontAwesome.Sharp.IconChar.Circle;
+            this.CloseBtn.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(96)))), ((int)(((byte)(88)))));
+            this.CloseBtn.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.CloseBtn.IconSize = 18;
+            this.CloseBtn.Location = new System.Drawing.Point(944, 10);
+            this.CloseBtn.Name = "CloseBtn";
+            this.CloseBtn.Size = new System.Drawing.Size(20, 19);
+            this.CloseBtn.TabIndex = 0;
+            this.CloseBtn.UseVisualStyleBackColor = false;
+            this.CloseBtn.Click += new System.EventHandler(this.iconButton1_Click);
+            this.CloseBtn.MouseLeave += new System.EventHandler(this.CloseBtn_MouseLeave);
+            this.CloseBtn.MouseHover += new System.EventHandler(this.iconButton1_MouseHover);
             // 
             // panel2
             // 
@@ -332,6 +338,8 @@ namespace ReplaceTool
             // ToolBar生成
             // 
             this.ToolBar生成.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(63)))), ((int)(((byte)(74)))));
+            this.ToolBar生成.Controls.Add(this.CheckRegCodeBtn);
+            this.ToolBar生成.Controls.Add(this.AddAuthCodeBtn);
             this.ToolBar生成.Controls.Add(this.GenerateToolBarTextBtn);
             this.ToolBar生成.Location = new System.Drawing.Point(139, 4);
             this.ToolBar生成.Name = "ToolBar生成";
@@ -339,6 +347,21 @@ namespace ReplaceTool
             this.ToolBar生成.Size = new System.Drawing.Size(829, 450);
             this.ToolBar生成.TabIndex = 2;
             this.ToolBar生成.Text = "ToolBar生成";
+            // 
+            // AddAuthCodeBtn
+            // 
+            this.AddAuthCodeBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.AddAuthCodeBtn.Customization = "7e3t//Ly8v/r6+v/5ubm/+vr6//f39//p6en/zw8PP8UFBT/gICA/w==";
+            this.AddAuthCodeBtn.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.AddAuthCodeBtn.Image = null;
+            this.AddAuthCodeBtn.Location = new System.Drawing.Point(18, 110);
+            this.AddAuthCodeBtn.Name = "AddAuthCodeBtn";
+            this.AddAuthCodeBtn.NoRounding = false;
+            this.AddAuthCodeBtn.Size = new System.Drawing.Size(140, 47);
+            this.AddAuthCodeBtn.TabIndex = 1;
+            this.AddAuthCodeBtn.Text = "添加权限代码到html中";
+            this.AddAuthCodeBtn.Transparent = false;
+            this.AddAuthCodeBtn.Click += new System.EventHandler(this.AddAuthCodeBtn_Click);
             // 
             // GenerateToolBarTextBtn
             // 
@@ -375,6 +398,7 @@ namespace ReplaceTool
             this.button2.TabIndex = 14;
             this.button2.Text = "转驼峰";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // 字符串处理
             // 
@@ -418,6 +442,7 @@ namespace ReplaceTool
             this.AddItSelf.TabIndex = 28;
             this.AddItSelf.Text = "替换数值添加到本身,后面设置加到几";
             this.AddItSelf.UseVisualStyleBackColor = true;
+            this.AddItSelf.Click += new System.EventHandler(this.AddItSelf_Click_1);
             // 
             // label5
             // 
@@ -455,6 +480,7 @@ namespace ReplaceTool
             this.contactTxtBtn.TabIndex = 26;
             this.contactTxtBtn.Text = "使用后面的符号拼接";
             this.contactTxtBtn.UseVisualStyleBackColor = true;
+            this.contactTxtBtn.Click += new System.EventHandler(this.contactTxtBtn_Click_1);
             // 
             // button5
             // 
@@ -465,6 +491,7 @@ namespace ReplaceTool
             this.button5.TabIndex = 25;
             this.button5.Text = "转成字符串";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click_1);
             // 
             // 多字符替换
             // 
@@ -564,6 +591,21 @@ namespace ReplaceTool
             this.dataGridView1.Size = new System.Drawing.Size(829, 218);
             this.dataGridView1.TabIndex = 1;
             // 
+            // CheckRegCodeBtn
+            // 
+            this.CheckRegCodeBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.CheckRegCodeBtn.Customization = "7e3t//Ly8v/r6+v/5ubm/+vr6//f39//p6en/zw8PP8UFBT/gICA/w==";
+            this.CheckRegCodeBtn.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.CheckRegCodeBtn.Image = null;
+            this.CheckRegCodeBtn.Location = new System.Drawing.Point(18, 218);
+            this.CheckRegCodeBtn.Name = "CheckRegCodeBtn";
+            this.CheckRegCodeBtn.NoRounding = false;
+            this.CheckRegCodeBtn.Size = new System.Drawing.Size(215, 47);
+            this.CheckRegCodeBtn.TabIndex = 2;
+            this.CheckRegCodeBtn.Text = "检查特定HTML中是否有权限代码";
+            this.CheckRegCodeBtn.Transparent = false;
+            this.CheckRegCodeBtn.Click += new System.EventHandler(this.CheckRegCodeBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -617,7 +659,7 @@ namespace ReplaceTool
         private System.Windows.Forms.TabPage ToolBar生成;
         private ReaLTaiizor.Controls.AirButton GenerateToolBarTextBtn;
         private System.Windows.Forms.Panel panel2;
-        private FontAwesome.Sharp.IconButton iconButton1;
+        private FontAwesome.Sharp.IconButton CloseBtn;
         private System.Windows.Forms.RichTextBox InputTextBox;
         private System.Windows.Forms.RichTextBox OutPutTextBox;
         private System.Windows.Forms.Panel panel3;
@@ -643,6 +685,8 @@ namespace ReplaceTool
         private System.Windows.Forms.Button ConfigDelBtn;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private ReaLTaiizor.Controls.AirButton AddAuthCodeBtn;
+        private ReaLTaiizor.Controls.AirButton CheckRegCodeBtn;
     }
 }
 
