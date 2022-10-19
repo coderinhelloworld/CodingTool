@@ -1,5 +1,6 @@
 ﻿using ekko.amazon.Util;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ReplaceTool.Entity;
 using ReplaceTool.Helper;
 using System;
@@ -25,6 +26,16 @@ namespace ReplaceTool
         public Form1()
         {
             InitializeComponent();
+        }
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                const int WS_MINIMIZEBOX = 0x00020000; // Winuser.h中定义
+                CreateParams cp = base.CreateParams;
+                cp.Style = cp.Style | WS_MINIMIZEBOX; // 允许最小化操作
+                return cp;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -282,7 +293,7 @@ namespace ReplaceTool
             var resStr = "";
             foreach (var item in res[0].Split(' '))
             {
-                if (!item.IsNullOrEmpty()&&item.ToLower()!="the")
+                if (!item.IsNullOrEmpty() && item.ToLower() != "the")
                 {
                     //首字母大写
                     resStr += item.First().ToString().ToUpper() + item.Substring(1);
@@ -520,12 +531,12 @@ namespace ReplaceTool
                 //替换文本
                 html = html.Replace(toolbarContent, changedToolbarContent).Replace(lazyLoadString, regPermissionCode);
                 File.WriteAllText(item, html, Encoding.UTF8);
-                OutPutTextBox.Text += item+"\r\n";
+                OutPutTextBox.Text += item + "\r\n";
             }
 
         }
 
-        public string   GetToolBarTranslateContent(string input)
+        public string GetToolBarTranslateContent(string input)
         {
             var translateList = new List<Translate>();
             translateList.Add(new Translate() { Key = "查询", Value = "Search" });
@@ -561,7 +572,7 @@ namespace ReplaceTool
             return inputText;
         }
 
-        public string GetRegPermissionCode(string toolbarAndIdContent,string tableName)
+        public string GetRegPermissionCode(string toolbarAndIdContent, string tableName)
         {
 
             var type = 1;
@@ -569,26 +580,137 @@ namespace ReplaceTool
             {
                 type = 2;
             }
-            var regPermissionCode= $"regPermission(\"{tableName}\", {type}); \r\n            $(\".lazyLoad\").css(\"visibility\",\"visible\")";
+            var regPermissionCode = $"regPermission(\"{tableName}\", {type}); \r\n            $(\".lazyLoad\").css(\"visibility\",\"visible\")";
             return regPermissionCode;
         }
 
         private void CheckRegCodeBtn_Click(object sender, EventArgs e)
         {
             OutPutTextBox.Text = "";
-            var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);            
+            var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);
             foreach (var item in filePathList)
             {
- 
+
                 var html = File.ReadAllText(item);
-                if (html.Contains("id:\"<"))
+                if (html.Contains("editor: { type: 'combobox'") && html.Contains("multiple: true") && html.Contains("treegrid"))
                 {
                     OutPutTextBox.Text += item + "\r\n";
                 }
-                
+
 
             }
             OutPutTextBox.Text += "Ending." + "\r\n";
+        }
+
+        private void PdmGetCSharpCodeBtn_Click(object sender, EventArgs e)
+        {
+            var tableName = TableNameBox.Text;
+
+            var inputText = InputTextBox.Text;
+            if (tableName.IsNullOrEmpty())
+            {
+                MessageBox.Show("表名不能为空");
+                return;
+            }
+            if (inputText.IsNullOrEmpty())
+            {
+                MessageBox.Show("输入内容不能为空");
+                return;
+            }
+
+            var sb = new StringBuilder();
+            var textList = inputText.Split(new string[] { "\n" }, StringSplitOptions.None);
+            foreach (var text in textList)
+            {
+                var items = GetStrFields(text).Split(' ');
+                if (items.Length > 0)
+                {
+                    sb.AppendLine("/// <summary>");
+                    sb.AppendLine($"/// {items[0]}");
+                    sb.AppendLine("/// </summary>");
+                    sb.AppendLine($" [Column(\"{items[1]}\", \"{items[0]}\")]");
+                    sb.AppendLine("public string " + items[1].ToPascal() + " {get;set;}");
+                    sb.AppendLine();
+                }
+
+            }
+            var res = $@"[Table(""{tableName}"", ""餐次信息"")]
+ public class {tableName.ToPascal()}Eo : FrameEo
+ {{
+                   {sb.ToString()}
+        
+             }}";
+            OutPutTextBox.Text = res;
+        }
+        public static string GetStrFields(string strWords)
+        {
+
+            Regex replaceSpace = new Regex(@"\s{1,}", RegexOptions.IgnoreCase);
+
+            return replaceSpace.Replace(strWords, " ").Trim();
+
+        }
+
+        private void MinBtn_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+
+        private void MinBtn_MouseHover(object sender, EventArgs e)
+        {
+            MinBtn.IconColor = Color.FromArgb(255, 128, 0);
+            this.MinBtn.IconChar = FontAwesome.Sharp.IconChar.Minus;
+        }
+
+        private void MinBtn_MouseLeave(object sender, EventArgs e)
+        {
+            MinBtn.IconColor = Color.FromArgb(251, 190, 47);
+            this.MinBtn.IconChar = FontAwesome.Sharp.IconChar.Circle;
+        }
+
+        /// <summary>
+        /// 文件更改成UTF-8格式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChangToUtf8Btn_Click(object sender, EventArgs e)
+        {
+            var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);
+            foreach (var item in filePathList)
+            {
+
+                var html = File.ReadAllText(item, FileHelper.GetType(item));
+                OutPutTextBox.Text += item + "\r\n";
+                File.WriteAllText(item, html, Encoding.GetEncoding("UTF-8"));
+
+            }
+        }
+
+        private void JsonFormatBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //JObject.ToString()方法会内部调用格式化，所以直接使用即可
+                string jsonStr = InputTextBox.Text.Trim();
+                //判读是数组还是对象
+                if (jsonStr.StartsWith("["))
+                {
+                    JArray jobj = JArray.Parse(jsonStr);
+                    OutPutTextBox.Text = jobj.ToString();
+                }
+                else if (jsonStr.StartsWith("{"))
+                {
+                    JObject jobj = JObject.Parse(jsonStr);
+                    OutPutTextBox.Text = jobj.ToString();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("错误的JSON");
+
+            }
         }
     }
 }

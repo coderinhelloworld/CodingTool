@@ -33,6 +33,7 @@ namespace ReplaceTool
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.MinBtn = new FontAwesome.Sharp.IconButton();
             this.CloseBtn = new FontAwesome.Sharp.IconButton();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -42,6 +43,10 @@ namespace ReplaceTool
             this.InputTextBox = new System.Windows.Forms.RichTextBox();
             this.toolbarGenerate = new ReaLTaiizor.Controls.TabPage();
             this.常用工具 = new System.Windows.Forms.TabPage();
+            this.ChangToUtf8Btn = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.TableNameBox = new ReaLTaiizor.Controls.BigTextBox();
+            this.PdmGetCSharpCodeBtn = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.GeneratNetPropertyWithSetGetBtn = new System.Windows.Forms.Button();
             this.OutPutBox = new System.Windows.Forms.TextBox();
@@ -52,6 +57,7 @@ namespace ReplaceTool
             this.propertyGenerateBtn = new System.Windows.Forms.Button();
             this.JsonToClassBtn = new System.Windows.Forms.Button();
             this.ToolBar生成 = new System.Windows.Forms.TabPage();
+            this.CheckRegCodeBtn = new ReaLTaiizor.Controls.AirButton();
             this.AddAuthCodeBtn = new ReaLTaiizor.Controls.AirButton();
             this.GenerateToolBarTextBtn = new ReaLTaiizor.Controls.AirButton();
             this.参数命名 = new System.Windows.Forms.TabPage();
@@ -74,7 +80,7 @@ namespace ReplaceTool
             this.ConfigDelBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.CheckRegCodeBtn = new ReaLTaiizor.Controls.AirButton();
+            this.JsonFormatBtn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -92,6 +98,7 @@ namespace ReplaceTool
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(46)))), ((int)(((byte)(46)))));
+            this.panel1.Controls.Add(this.MinBtn);
             this.panel1.Controls.Add(this.CloseBtn);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -99,6 +106,25 @@ namespace ReplaceTool
             this.panel1.Size = new System.Drawing.Size(972, 37);
             this.panel1.TabIndex = 33;
             this.panel1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown_1);
+            // 
+            // MinBtn
+            // 
+            this.MinBtn.BackColor = System.Drawing.Color.Transparent;
+            this.MinBtn.FlatAppearance.BorderSize = 0;
+            this.MinBtn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.MinBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.MinBtn.IconChar = FontAwesome.Sharp.IconChar.Circle;
+            this.MinBtn.IconColor = System.Drawing.Color.FromArgb(((int)(((byte)(251)))), ((int)(((byte)(190)))), ((int)(((byte)(47)))));
+            this.MinBtn.IconFont = FontAwesome.Sharp.IconFont.Solid;
+            this.MinBtn.IconSize = 18;
+            this.MinBtn.Location = new System.Drawing.Point(918, 10);
+            this.MinBtn.Name = "MinBtn";
+            this.MinBtn.Size = new System.Drawing.Size(20, 19);
+            this.MinBtn.TabIndex = 1;
+            this.MinBtn.UseVisualStyleBackColor = false;
+            this.MinBtn.Click += new System.EventHandler(this.MinBtn_Click);
+            this.MinBtn.MouseLeave += new System.EventHandler(this.MinBtn_MouseLeave);
+            this.MinBtn.MouseHover += new System.EventHandler(this.MinBtn_MouseHover);
             // 
             // CloseBtn
             // 
@@ -229,6 +255,11 @@ namespace ReplaceTool
             // 常用工具
             // 
             this.常用工具.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(63)))), ((int)(((byte)(74)))));
+            this.常用工具.Controls.Add(this.JsonFormatBtn);
+            this.常用工具.Controls.Add(this.ChangToUtf8Btn);
+            this.常用工具.Controls.Add(this.label3);
+            this.常用工具.Controls.Add(this.TableNameBox);
+            this.常用工具.Controls.Add(this.PdmGetCSharpCodeBtn);
             this.常用工具.Controls.Add(this.label4);
             this.常用工具.Controls.Add(this.GeneratNetPropertyWithSetGetBtn);
             this.常用工具.Controls.Add(this.OutPutBox);
@@ -244,6 +275,55 @@ namespace ReplaceTool
             this.常用工具.Size = new System.Drawing.Size(829, 450);
             this.常用工具.TabIndex = 1;
             this.常用工具.Text = "常用工具";
+            // 
+            // ChangToUtf8Btn
+            // 
+            this.ChangToUtf8Btn.Location = new System.Drawing.Point(32, 246);
+            this.ChangToUtf8Btn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.ChangToUtf8Btn.Name = "ChangToUtf8Btn";
+            this.ChangToUtf8Btn.Size = new System.Drawing.Size(124, 44);
+            this.ChangToUtf8Btn.TabIndex = 33;
+            this.ChangToUtf8Btn.Text = "文件夹下的文件更改成UTF-8格式";
+            this.ChangToUtf8Btn.UseVisualStyleBackColor = true;
+            this.ChangToUtf8Btn.Click += new System.EventHandler(this.ChangToUtf8Btn_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("微软雅黑", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label3.ForeColor = System.Drawing.Color.White;
+            this.label3.Location = new System.Drawing.Point(26, 182);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(86, 31);
+            this.label3.TabIndex = 32;
+            this.label3.Text = "表名称";
+            // 
+            // TableNameBox
+            // 
+            this.TableNameBox.BackColor = System.Drawing.Color.Transparent;
+            this.TableNameBox.Font = new System.Drawing.Font("Tahoma", 11F);
+            this.TableNameBox.ForeColor = System.Drawing.Color.DimGray;
+            this.TableNameBox.Image = null;
+            this.TableNameBox.Location = new System.Drawing.Point(118, 177);
+            this.TableNameBox.MaxLength = 32767;
+            this.TableNameBox.Multiline = false;
+            this.TableNameBox.Name = "TableNameBox";
+            this.TableNameBox.ReadOnly = false;
+            this.TableNameBox.Size = new System.Drawing.Size(100, 41);
+            this.TableNameBox.TabIndex = 31;
+            this.TableNameBox.TextAlignment = System.Windows.Forms.HorizontalAlignment.Left;
+            this.TableNameBox.UseSystemPasswordChar = false;
+            // 
+            // PdmGetCSharpCodeBtn
+            // 
+            this.PdmGetCSharpCodeBtn.Location = new System.Drawing.Point(224, 175);
+            this.PdmGetCSharpCodeBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.PdmGetCSharpCodeBtn.Name = "PdmGetCSharpCodeBtn";
+            this.PdmGetCSharpCodeBtn.Size = new System.Drawing.Size(124, 44);
+            this.PdmGetCSharpCodeBtn.TabIndex = 30;
+            this.PdmGetCSharpCodeBtn.Text = "PDM生成C#类";
+            this.PdmGetCSharpCodeBtn.UseVisualStyleBackColor = true;
+            this.PdmGetCSharpCodeBtn.Click += new System.EventHandler(this.PdmGetCSharpCodeBtn_Click);
             // 
             // label4
             // 
@@ -304,7 +384,7 @@ namespace ReplaceTool
             // 
             // SqlParaReplaceBtn
             // 
-            this.SqlParaReplaceBtn.Location = new System.Drawing.Point(166, 19);
+            this.SqlParaReplaceBtn.Location = new System.Drawing.Point(309, 19);
             this.SqlParaReplaceBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.SqlParaReplaceBtn.Name = "SqlParaReplaceBtn";
             this.SqlParaReplaceBtn.Size = new System.Drawing.Size(100, 44);
@@ -315,7 +395,7 @@ namespace ReplaceTool
             // 
             // propertyGenerateBtn
             // 
-            this.propertyGenerateBtn.Location = new System.Drawing.Point(302, 19);
+            this.propertyGenerateBtn.Location = new System.Drawing.Point(434, 19);
             this.propertyGenerateBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.propertyGenerateBtn.Name = "propertyGenerateBtn";
             this.propertyGenerateBtn.Size = new System.Drawing.Size(94, 44);
@@ -326,7 +406,7 @@ namespace ReplaceTool
             // 
             // JsonToClassBtn
             // 
-            this.JsonToClassBtn.Location = new System.Drawing.Point(32, 19);
+            this.JsonToClassBtn.Location = new System.Drawing.Point(155, 19);
             this.JsonToClassBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.JsonToClassBtn.Name = "JsonToClassBtn";
             this.JsonToClassBtn.Size = new System.Drawing.Size(100, 44);
@@ -347,6 +427,21 @@ namespace ReplaceTool
             this.ToolBar生成.Size = new System.Drawing.Size(829, 450);
             this.ToolBar生成.TabIndex = 2;
             this.ToolBar生成.Text = "ToolBar生成";
+            // 
+            // CheckRegCodeBtn
+            // 
+            this.CheckRegCodeBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.CheckRegCodeBtn.Customization = "7e3t//Ly8v/r6+v/5ubm/+vr6//f39//p6en/zw8PP8UFBT/gICA/w==";
+            this.CheckRegCodeBtn.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.CheckRegCodeBtn.Image = null;
+            this.CheckRegCodeBtn.Location = new System.Drawing.Point(18, 218);
+            this.CheckRegCodeBtn.Name = "CheckRegCodeBtn";
+            this.CheckRegCodeBtn.NoRounding = false;
+            this.CheckRegCodeBtn.Size = new System.Drawing.Size(215, 47);
+            this.CheckRegCodeBtn.TabIndex = 2;
+            this.CheckRegCodeBtn.Text = "检查特定HTML中是否有权限代码";
+            this.CheckRegCodeBtn.Transparent = false;
+            this.CheckRegCodeBtn.Click += new System.EventHandler(this.CheckRegCodeBtn_Click);
             // 
             // AddAuthCodeBtn
             // 
@@ -591,20 +686,16 @@ namespace ReplaceTool
             this.dataGridView1.Size = new System.Drawing.Size(829, 218);
             this.dataGridView1.TabIndex = 1;
             // 
-            // CheckRegCodeBtn
+            // JsonFormatBtn
             // 
-            this.CheckRegCodeBtn.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.CheckRegCodeBtn.Customization = "7e3t//Ly8v/r6+v/5ubm/+vr6//f39//p6en/zw8PP8UFBT/gICA/w==";
-            this.CheckRegCodeBtn.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.CheckRegCodeBtn.Image = null;
-            this.CheckRegCodeBtn.Location = new System.Drawing.Point(18, 218);
-            this.CheckRegCodeBtn.Name = "CheckRegCodeBtn";
-            this.CheckRegCodeBtn.NoRounding = false;
-            this.CheckRegCodeBtn.Size = new System.Drawing.Size(215, 47);
-            this.CheckRegCodeBtn.TabIndex = 2;
-            this.CheckRegCodeBtn.Text = "检查特定HTML中是否有权限代码";
-            this.CheckRegCodeBtn.Transparent = false;
-            this.CheckRegCodeBtn.Click += new System.EventHandler(this.CheckRegCodeBtn_Click);
+            this.JsonFormatBtn.Location = new System.Drawing.Point(32, 19);
+            this.JsonFormatBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.JsonFormatBtn.Name = "JsonFormatBtn";
+            this.JsonFormatBtn.Size = new System.Drawing.Size(100, 44);
+            this.JsonFormatBtn.TabIndex = 34;
+            this.JsonFormatBtn.Text = "Json格式化";
+            this.JsonFormatBtn.UseVisualStyleBackColor = true;
+            this.JsonFormatBtn.Click += new System.EventHandler(this.JsonFormatBtn_Click);
             // 
             // Form1
             // 
@@ -687,6 +778,12 @@ namespace ReplaceTool
         private System.Windows.Forms.DataGridView dataGridView1;
         private ReaLTaiizor.Controls.AirButton AddAuthCodeBtn;
         private ReaLTaiizor.Controls.AirButton CheckRegCodeBtn;
+        private System.Windows.Forms.Button PdmGetCSharpCodeBtn;
+        private ReaLTaiizor.Controls.BigTextBox TableNameBox;
+        private System.Windows.Forms.Label label3;
+        private FontAwesome.Sharp.IconButton MinBtn;
+        private System.Windows.Forms.Button ChangToUtf8Btn;
+        private System.Windows.Forms.Button JsonFormatBtn;
     }
 }
 
