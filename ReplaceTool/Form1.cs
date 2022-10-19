@@ -1,4 +1,5 @@
 ﻿using ekko.amazon.Util;
+using ICSharpCode.TextEditor.Document;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReplaceTool.Entity;
@@ -26,6 +27,7 @@ namespace ReplaceTool
         public Form1()
         {
             InitializeComponent();
+            OutPutTextBox.Document.HighlightingStrategy = ICSharpCode.TextEditor.Document.HighlightingStrategyFactory.CreateHighlightingStrategy("C#");
         }
         protected override CreateParams CreateParams
         {
@@ -712,5 +714,6 @@ namespace ReplaceTool
 
             }
         }
+
     }
 }

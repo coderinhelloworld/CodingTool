@@ -38,11 +38,12 @@ namespace ReplaceTool
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.OutPutTextBox = new System.Windows.Forms.RichTextBox();
+            this.OutPutTextBox = new ICSharpCode.TextEditor.TextEditorControl();
             this.panel4 = new ReaLTaiizor.Controls.Panel();
             this.InputTextBox = new System.Windows.Forms.RichTextBox();
             this.toolbarGenerate = new ReaLTaiizor.Controls.TabPage();
             this.常用工具 = new System.Windows.Forms.TabPage();
+            this.JsonFormatBtn = new System.Windows.Forms.Button();
             this.ChangToUtf8Btn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.TableNameBox = new ReaLTaiizor.Controls.BigTextBox();
@@ -80,7 +81,6 @@ namespace ReplaceTool
             this.ConfigDelBtn = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.JsonFormatBtn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -179,15 +179,12 @@ namespace ReplaceTool
             // 
             // OutPutTextBox
             // 
-            this.OutPutTextBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.OutPutTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.OutPutTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.OutPutTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.OutPutTextBox.Highlighting = null;
             this.OutPutTextBox.Location = new System.Drawing.Point(5, 5);
             this.OutPutTextBox.Name = "OutPutTextBox";
             this.OutPutTextBox.Size = new System.Drawing.Size(493, 328);
-            this.OutPutTextBox.TabIndex = 10;
-            this.OutPutTextBox.Text = "";
+            this.OutPutTextBox.TabIndex = 11;
             // 
             // panel4
             // 
@@ -275,6 +272,17 @@ namespace ReplaceTool
             this.常用工具.Size = new System.Drawing.Size(829, 450);
             this.常用工具.TabIndex = 1;
             this.常用工具.Text = "常用工具";
+            // 
+            // JsonFormatBtn
+            // 
+            this.JsonFormatBtn.Location = new System.Drawing.Point(32, 19);
+            this.JsonFormatBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.JsonFormatBtn.Name = "JsonFormatBtn";
+            this.JsonFormatBtn.Size = new System.Drawing.Size(100, 44);
+            this.JsonFormatBtn.TabIndex = 34;
+            this.JsonFormatBtn.Text = "Json格式化";
+            this.JsonFormatBtn.UseVisualStyleBackColor = true;
+            this.JsonFormatBtn.Click += new System.EventHandler(this.JsonFormatBtn_Click);
             // 
             // ChangToUtf8Btn
             // 
@@ -686,17 +694,6 @@ namespace ReplaceTool
             this.dataGridView1.Size = new System.Drawing.Size(829, 218);
             this.dataGridView1.TabIndex = 1;
             // 
-            // JsonFormatBtn
-            // 
-            this.JsonFormatBtn.Location = new System.Drawing.Point(32, 19);
-            this.JsonFormatBtn.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.JsonFormatBtn.Name = "JsonFormatBtn";
-            this.JsonFormatBtn.Size = new System.Drawing.Size(100, 44);
-            this.JsonFormatBtn.TabIndex = 34;
-            this.JsonFormatBtn.Text = "Json格式化";
-            this.JsonFormatBtn.UseVisualStyleBackColor = true;
-            this.JsonFormatBtn.Click += new System.EventHandler(this.JsonFormatBtn_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -752,7 +749,6 @@ namespace ReplaceTool
         private System.Windows.Forms.Panel panel2;
         private FontAwesome.Sharp.IconButton CloseBtn;
         private System.Windows.Forms.RichTextBox InputTextBox;
-        private System.Windows.Forms.RichTextBox OutPutTextBox;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel5;
         private ReaLTaiizor.Controls.Panel panel4;
@@ -784,6 +780,7 @@ namespace ReplaceTool
         private FontAwesome.Sharp.IconButton MinBtn;
         private System.Windows.Forms.Button ChangToUtf8Btn;
         private System.Windows.Forms.Button JsonFormatBtn;
+        private ICSharpCode.TextEditor.TextEditorControl OutPutTextBox;
     }
 }
 
