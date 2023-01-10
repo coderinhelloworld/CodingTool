@@ -11,7 +11,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-
 namespace ekko.amazon.Util
 {
     public static partial class Extention
@@ -25,7 +24,6 @@ namespace ekko.amazon.Util
         {
             return bool.Parse(str);
         }
-
         /// <summary>
         /// 转为字节数组
         /// </summary>
@@ -35,7 +33,6 @@ namespace ekko.amazon.Util
         {
             return Convert.FromBase64String(base64Str);
         }
-
         /// <summary>
         /// 转换为MD5加密后的字符串（默认加密为32位）
         /// </summary>
@@ -46,17 +43,14 @@ namespace ekko.amazon.Util
             MD5 md5 = MD5.Create();
             byte[] inputBytes = Encoding.UTF8.GetBytes(str);
             byte[] hashBytes = md5.ComputeHash(inputBytes);
-
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < hashBytes.Length; i++)
             {
                 sb.Append(hashBytes[i].ToString("x2"));
             }
             md5.Dispose();
-
             return sb.ToString();
         }
-
         /// <summary>
         /// 转换为MD5加密后的字符串（16位）
         /// </summary>
@@ -66,7 +60,6 @@ namespace ekko.amazon.Util
         {
             return str.ToMD5String().Substring(8, 16);
         }
-
         /// <summary>
         /// Base64加密
         /// 注:默认采用UTF8编码
@@ -77,7 +70,6 @@ namespace ekko.amazon.Util
         {
             return Base64Encode(source, Encoding.UTF8);
         }
-
         /// <summary>
         /// Base64加密
         /// </summary>
@@ -98,7 +90,6 @@ namespace ekko.amazon.Util
             }
             return encode;
         }
-
         /// <summary>
         /// Base64解密
         /// 注:默认使用UTF8编码
@@ -109,7 +100,6 @@ namespace ekko.amazon.Util
         {
             return Base64Decode(result, Encoding.UTF8);
         }
-
         /// <summary>
         /// Base64解密
         /// </summary>
@@ -130,7 +120,6 @@ namespace ekko.amazon.Util
             }
             return decode;
         }
-
         /// <summary>
         /// Base64Url编码
         /// </summary>
@@ -140,10 +129,8 @@ namespace ekko.amazon.Util
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(text);
             var base64 = Convert.ToBase64String(plainTextBytes).Replace('+', '-').Replace('/', '_').TrimEnd('=');
-
             return base64;
         }
-
         /// <summary>
         /// Base64Url解码
         /// </summary>
@@ -162,10 +149,8 @@ namespace ekko.amazon.Util
                     break;
             }
             var bytes = Convert.FromBase64String(base64UrlStr);
-
             return Encoding.UTF8.GetString(bytes);
         }
-
         /// <summary>
         /// 计算SHA1摘要
         /// 注：默认使用UTF8编码
@@ -176,7 +161,6 @@ namespace ekko.amazon.Util
         {
             return str.ToSHA1Bytes(Encoding.UTF8);
         }
-
         /// <summary>
         /// 计算SHA1摘要
         /// </summary>
@@ -188,10 +172,8 @@ namespace ekko.amazon.Util
             SHA1 sha1 = new SHA1CryptoServiceProvider();
             byte[] inputBytes = encoding.GetBytes(str);
             byte[] outputBytes = sha1.ComputeHash(inputBytes);
-
             return outputBytes;
         }
-
         /// <summary>
         /// 转为SHA1哈希加密字符串
         /// 注：默认使用UTF8编码
@@ -202,7 +184,6 @@ namespace ekko.amazon.Util
         {
             return str.ToSHA1String(Encoding.UTF8);
         }
-
         /// <summary>
         /// 转为SHA1哈希
         /// </summary>
@@ -215,7 +196,6 @@ namespace ekko.amazon.Util
             string resStr = BitConverter.ToString(sha1Bytes);
             return resStr.Replace("-", "").ToLower();
         }
-
         /// <summary>
         /// SHA256加密
         /// </summary>
@@ -225,16 +205,13 @@ namespace ekko.amazon.Util
         {
             byte[] bytes = Encoding.UTF8.GetBytes(str);
             byte[] hash = SHA256.Create().ComputeHash(bytes);
-
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < hash.Length; i++)
             {
                 builder.Append(hash[i].ToString("x2"));
             }
-
             return builder.ToString();
         }
-
         /// <summary>
         /// HMACSHA256算法
         /// </summary>
@@ -252,7 +229,6 @@ namespace ekko.amazon.Util
                 return Convert.ToBase64String(hashmessage).Replace('+', '-').Replace('/', '_').TrimEnd('=');
             }
         }
-
         /// <summary>
         /// string转int
         /// </summary>
@@ -265,7 +241,6 @@ namespace ekko.amazon.Util
                 return 0;
             return Convert.ToInt32(str);
         }
-
         /// <summary>
         /// string转long
         /// </summary>
@@ -276,10 +251,8 @@ namespace ekko.amazon.Util
             str = str.Replace("\0", "");
             if (string.IsNullOrEmpty(str))
                 return 0;
-
             return Convert.ToInt64(str);
         }
-
         /// <summary>
         /// 二进制字符串转为Int
         /// </summary>
@@ -289,7 +262,6 @@ namespace ekko.amazon.Util
         {
             return Convert.ToInt32(str, 2);
         }
-
         /// <summary>
         /// 将16进制字符串转为Int
         /// </summary>
@@ -300,7 +272,6 @@ namespace ekko.amazon.Util
             int num = Int32.Parse(str, NumberStyles.HexNumber);
             return num;
         }
-
         /// <summary>
         /// 转换为double
         /// </summary>
@@ -310,7 +281,6 @@ namespace ekko.amazon.Util
         {
             return Convert.ToDouble(str);
         }
-
         /// <summary>
         /// string转byte[]
         /// </summary>
@@ -320,7 +290,6 @@ namespace ekko.amazon.Util
         {
             return Encoding.Default.GetBytes(str);
         }
-
         /// <summary>
         /// string转byte[]
         /// </summary>
@@ -331,7 +300,6 @@ namespace ekko.amazon.Util
         {
             return theEncoding.GetBytes(str);
         }
-
         /// <summary>
         /// 将16进制字符串转为Byte数组
         /// </summary>
@@ -345,10 +313,8 @@ namespace ekko.amazon.Util
                 string numStr = $@"{str[i]}{str[i + 1]}";
                 resBytes.Add((byte)numStr.ToInt0X());
             }
-
             return resBytes.ToArray();
         }
-
         /// <summary>
         /// 将ASCII码形式的字符串转为对应字节数组
         /// 注：一个字节一个ASCII码字符
@@ -359,7 +325,6 @@ namespace ekko.amazon.Util
         {
             return str.ToList().Select(x => (byte)x).ToArray();
         }
-
         /// <summary>
         /// 转换为日期格式
         /// </summary>
@@ -369,7 +334,6 @@ namespace ekko.amazon.Util
         {
             return Convert.ToDateTime(str);
         }
-
         /// <summary>
         /// 删除Json字符串中键中的@符号
         /// </summary>
@@ -381,7 +345,6 @@ namespace ekko.amazon.Util
             string strPatten = "\"$1\":\"$2\"";
             return reg.Replace(jsonStr, strPatten);
         }
-
         /// <summary>
         /// 将XML字符串反序列化为对象
         /// </summary>
@@ -393,10 +356,8 @@ namespace ekko.amazon.Util
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmlStr);
             string jsonJsonStr = JsonConvert.SerializeXmlNode(doc);
-
             return JsonConvert.DeserializeObject<T>(jsonJsonStr);
         }
-
         /// <summary>
         /// 将XML字符串反序列化为对象
         /// </summary>
@@ -407,10 +368,8 @@ namespace ekko.amazon.Util
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmlStr);
             string jsonJsonStr = JsonConvert.SerializeXmlNode(doc);
-
             return JsonConvert.DeserializeObject<JObject>(jsonJsonStr);
         }
-
         /// <summary>
         /// 将Json字符串转为List'T'
         /// </summary>
@@ -421,7 +380,6 @@ namespace ekko.amazon.Util
         {
             return string.IsNullOrEmpty(jsonStr) ? null : JsonConvert.DeserializeObject<List<T>>(jsonStr);
         }
-
         /// <summary>
         /// 将Json字符串转为DataTable
         /// </summary>
@@ -431,7 +389,6 @@ namespace ekko.amazon.Util
         {
             return jsonStr == null ? null : JsonConvert.DeserializeObject<DataTable>(jsonStr);
         }
-
         /// <summary>
         /// 将Json字符串转为JObject
         /// </summary>
@@ -441,7 +398,6 @@ namespace ekko.amazon.Util
         {
             return jsonStr == null ? JObject.Parse("{}") : JObject.Parse(jsonStr.Replace("&nbsp;", ""));
         }
-
         /// <summary>
         /// 将Json字符串转为JArray
         /// </summary>
@@ -451,7 +407,6 @@ namespace ekko.amazon.Util
         {
             return jsonStr == null ? JArray.Parse("[]") : JArray.Parse(jsonStr.Replace("&nbsp;", ""));
         }
-
         /// <summary>
         /// json数据转实体类,仅仅应用于单个实体类，速度非常快
         /// </summary>
@@ -462,10 +417,8 @@ namespace ekko.amazon.Util
         {
             if (json == null || json == "")
                 return default(T);
-
             Type type = typeof(T);
             object obj = Activator.CreateInstance(type, null);
-
             foreach (var item in type.GetProperties())
             {
                 PropertyInfo info = obj.GetType().GetProperty(item.Name);
@@ -484,7 +437,6 @@ namespace ekko.amazon.Util
             }
             return (T)obj;
         }
-
         /// <summary>
         /// 转为首字母大写
         /// </summary>
@@ -494,7 +446,6 @@ namespace ekko.amazon.Util
         {
             return str.Substring(0, 1).ToUpper() + str.Substring(1);
         }
-
         /// <summary>
         /// 转为首字母小写
         /// </summary>
@@ -504,7 +455,6 @@ namespace ekko.amazon.Util
         {
             return str.Substring(0, 1).ToLower() + str.Substring(1);
         }
-
         /// <summary>
         /// 转为网络终结点IPEndPoint
         /// </summary>=
@@ -524,10 +474,8 @@ namespace ekko.amazon.Util
             {
                 iPEndPoint = null;
             }
-
             return iPEndPoint;
         }
-
         /// <summary>
         /// 将枚举类型的文本转为枚举类型
         /// </summary>
@@ -537,10 +485,8 @@ namespace ekko.amazon.Util
         public static TEnum ToEnum<TEnum>(this string enumText) where TEnum : struct
         {
             Enum.TryParse(enumText, out TEnum value);
-
             return value;
         }
-
         /// <summary>
         /// 是否为空字符串
         /// </summary>
@@ -566,7 +512,6 @@ namespace ekko.amazon.Util
             else
                 return false;
         }
-
         /// <summary>
         /// 转为大驼峰命名
         /// </summary>
@@ -590,8 +535,5 @@ namespace ekko.amazon.Util
             }
             return newStr;
         }
-
-
-
     }
 }

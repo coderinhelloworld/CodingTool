@@ -4,11 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace ReplaceTool.Helper
 {
    public static class FileHelper
     {
+        /// <summary>
+        /// 获取路径下的所有文件夹
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static List<string> GetDirAllFiles(string path)
         {
             var fileList = new List<string>();
@@ -20,14 +24,10 @@ namespace ReplaceTool.Helper
             }
             return fileList;
         }
-        public static  System.IO.FileInfo[] GetAllFileInfo(System.IO.DirectoryInfo dir)
+        private static  System.IO.FileInfo[] GetAllFileInfo(System.IO.DirectoryInfo dir)
         {
             return dir.GetFiles(".", System.IO.SearchOption.AllDirectories);
-
         }
-
-
-
         /// <summary>
         /// 给定文件的路径，读取文件的二进制数据，判断文件的编码类型
         /// </summary>
@@ -40,7 +40,6 @@ namespace ReplaceTool.Helper
             fs.Close();
             return r;
         }
-
         /// <summary>
         /// 通过给定的文件流，判断文件的编码类型
         /// </summary>
@@ -52,7 +51,6 @@ namespace ReplaceTool.Helper
             byte[] UnicodeBIG = new byte[] { 0xFE, 0xFF, 0x00 };
             byte[] UTF8 = new byte[] { 0xEF, 0xBB, 0xBF }; //带BOM
             Encoding reVal = Encoding.Default;
-
             BinaryReader r = new BinaryReader(fs, System.Text.Encoding.Default);
             int i;
             int.TryParse(fs.Length.ToString(), out i);
@@ -71,9 +69,7 @@ namespace ReplaceTool.Helper
             }
             r.Close();
             return reVal;
-
         }
-
         /// <summary>
         /// 判断是否是不带 BOM 的 UTF8 格式
         /// </summary>

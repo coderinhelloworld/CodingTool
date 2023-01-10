@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Bussiness.Comm;
+using Entity;
+using Entity.Enums;
+using TcSoft.Util.Filter;
+using YKTWeb.Utils;
+namespace YKTWeb.Handlers.Comm
+{
+    /// <summary>
+    /// CommTaskInfoHandler 的摘要说明
+    /// </summary>
+    public class {{TableName}}Handler : BaseHttpHandler
+    {
+        private {{TableName}}Bo {{TableName}}Bo { get; set; }
+        /// <summary>
+        /// 首页。
+        /// </summary>
+        /// <returns></returns>
+        [HttpMethod(RequestMethod.Post, "查找")]
+        public ActionResult Index()
+        {
+            ActionResult model = new ActionResult();
+            PageDataIn pdi = base.GetDefaultPDM();
+            PageDataOut pdo = this.{{TableName}}Bo.GetPageObject(pdi);
+            model.SetData(WebHelper.SerializePageDataOut(pdo));
+            return model;
+        }
+    }
+}

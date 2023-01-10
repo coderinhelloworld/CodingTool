@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>一卡通云平台</title>
+    <script type="text/javascript" src="../../../Scripts/loader.js?v=000004"
+            id="loaderJs"></script>
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            // 初始化
+            $("#tblData").datagrid({
+                width: 'auto',
+                height: 'auto',
+                pagination: true,
+                rownumbers: true,
+                loadMsg: "正在加载数据,请稍候...",
+                pageSize: 50,
+                pageList: [10, 50, 100, 200],
+                fitColumns: true,
+                fit: true,
+                dataType: "json",
+                singleSelect: true,
+                striped: true,
+                toolbar: [
+                    { text: '查询', id: "Search", iconCls: 'icon-search', handler: function () { searchRecords(1, getDataGridPageSize("tblData"), true); } },
+                    '-',
+                    { text: '添加', id: "Save", iconCls: 'icon-add', handler: addRecord },
+                    { text: '编辑', id: "Update", iconCls: 'icon-edit', handler: uploadData },
+                    { text: '删除', id: "Delete", iconCls: 'icon-delete', handler: deleteRecord }
+                ],
+                frozenColumns: [[
+                    { field: 'ck', checkbox: true },
+                ]],
+                columns: [[
+                    { field: 'UserTypeNo', title: '用户类型编号', width: 80, align: 'left' },
+                ]],
+                onDblClickRow: uploadData
+            });
+            searchRecords(1, 50, true);
+            regPermission("tblData", 1);
+            $(".lazyLoad").css("visibility","visible");
+        });
+        // 新增
+        function addRecord() {
+            showSUModal("create", "创建用户类型", "{{AddHtmlPath}}", {}, 600, 330, function (retVal) {
+                searchRecords(1, 50, true);
+            });
+        }
+        // 更新
+        function uploadData() {
+            var row = $("#tblData").datagrid("getSelected");
+            if (row) {
+                entityObj = row;
+                showSUModal("edit", "编辑用户类型", "{{EditHtmlPath}}", row, 600, 330, function (retVal) {
+                    if ("ok" == retVal) {
+                        searchRecords(1, 50, true);
+                    }
+                });
+            } else {
+                alertEx("请选择记录！");
+            }
+        }
+        // 删除
+        function deleteRecord() {
+            var rows = getSelectedKeys("tblData", "UserTypeId");
+            if (rows != null) {
+                confirmEx(function () {
+                    processRequest("{{HandlerPath}}", "Delete", rows, function (retCode, retVal) {
+                        if (retCodeSuccess == retCode) {
+                            searchRecords(1, 50, true);
+                        } else {
+                            alertEx(retVal);
+                        }
+                    });
+                }, "是否删除选中的记录?", "删除确认");
+            } else {
+                alertEx("请选择记录！");
+            }
+        }
+        // 查询
+        function searchRecords(pageNo, pageSize, initPage) {
+            showProgressEx(function () {
+                processRequest("{{HandlerPath}}", "Index", getUrlCondition(pageNo, pageSize, $("#tblData")), function (retCode, retVal) {
+                    if (retCodeSuccess == retCode) {
+                        $("#tblData").datagrid("loadData", stringToJSON(retVal));
+                        if (pageNo == 1 && initPage) {
+                            var p = $("#tblData").datagrid('getPager');
+                            $(p).pagination({
+                                pageNumber: 1,
+                                beforePageText: '第', //页数文本框前显示的汉字
+                                afterPageText: '页,共{pages}页',
+                                displayMsg: '共{total}条记录',
+                                showRefresh: false,
+                                onSelectPage: function (pageNo, pageSize) {
+                                    searchRecords(pageNo, pageSize);
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+</head>
+<body class="easyui-layout lazyLoad" style="width: 100%; height: 100%;" fit="true"
+      border="false">
+    <div region="west" split="true" title="查询条件" style="width: 280px;" border="true">
+        <table class="tblCondition" style="width: 100%" border="0" cellpadding="1" cellspacing="1">
+            <tbody>
+                <tr>
+                    <th>
+                        用户类型编号：
+                    </th>
+                    <td>
+                        <input id="Filter-String-Equal-ut-USER_TYPE_NO" class="easyui-textbox" prompt="查询条件" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div region="center" title="{{TableTitle}}" border="true">
+        <table id="tblData" border="false">
+        </table>
+    </div>
+</body>
+</html>

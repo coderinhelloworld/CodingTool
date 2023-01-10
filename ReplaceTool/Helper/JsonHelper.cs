@@ -1,35 +1,56 @@
 ﻿using ekko.amazon.Util;
 using Microsoft.JScript;
 using Microsoft.JScript.Vsa;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace ReplaceTool.Helper
 {
     public class JsonHelper
     {
+        public string ConvertJsonString(string str)
+        {
+            //格式化json字符串
+            JsonSerializer serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            JsonTextReader jtr = new JsonTextReader(tr);
+            object obj = serializer.Deserialize(jtr);
+            if (obj != null)
+            {
+                StringWriter textWriter = new StringWriter();
+                JsonTextWriter jsonWriter = new JsonTextWriter(textWriter)
+                {
+                    Formatting = Formatting.Indented,
+                    Indentation = 4,
+                    IndentChar = ' '
+                };
+                serializer.Serialize(jsonWriter, obj);
+                return textWriter.ToString();
+            }
+            else
+            {
+                return str;
+            }
+        }
         /// <summary>
         /// 是否添加get set
         /// </summary>
         private bool isAddGetSet = true;
-
         /// <summary>
         /// 数据集合，临时
         /// </summary>
         private List<AutoClass> dataList = new List<AutoClass>();
-
         public JsonHelper()
         {
         }
-
         public JsonHelper(bool isAddGetSet)
         {
             this.isAddGetSet = isAddGetSet;
         }
-
         /// <summary>
         /// 获取类的字符串形式
         /// </summary>
@@ -39,10 +60,8 @@ namespace ReplaceTool.Helper
         {
             var ve =VsaEngine.CreateEngine();
             var m = Microsoft.JScript.Eval.JScriptEvaluate("(" + jsonStr + ")", ve);
-
             int index = 0;
             var result = GetDicType((JSObject)m, ref index);
-
             StringBuilder content = new StringBuilder();
             foreach (var item in dataList)
             {
@@ -59,17 +78,13 @@ namespace ReplaceTool.Helper
                     {
                         content.AppendFormat("\t\tpublic {0} {1};\r\n", model.Value, model.Key.ToPascal());
                     }
-
                     content.AppendLine();
                 }
-
                 content.AppendLine("\t}");
                 content.AppendLine();
             }
-
             return content.ToString();
         }
-
         /// <summary>
         /// 获取类型的字符串表示
         /// </summary>
@@ -106,7 +121,6 @@ namespace ReplaceTool.Helper
                 return "string";
             }
         }
-
         /// <summary>
         /// 获取字典类型
         /// </summary>
@@ -114,7 +128,6 @@ namespace ReplaceTool.Helper
         private string GetDicType(JSObject jsObj, ref int index)
         {
             AutoClass classInfo = new AutoClass();
-
             var model = ((Microsoft.JScript.JSObject)(jsObj)).GetMembers(System.Reflection.BindingFlags.GetField);
             foreach (Microsoft.JScript.JSField item in model)
             {
@@ -143,13 +156,11 @@ namespace ReplaceTool.Helper
                     classInfo.Dic.Add(name, GetTypeString(type));
                 }
             }
-
             index++;
             classInfo.CLassName = "Class" + index;
             dataList.Add(classInfo);
             return classInfo.CLassName;
         }
-
         /// <summary>
         /// 读取集合类型
         /// </summary>
@@ -172,17 +183,13 @@ namespace ReplaceTool.Helper
                     name = "List<" + GetTypeString(type) + ">";
                 }
             }
-
             return name;
         }
     }
-
     public class AutoClass
     {
         public string CLassName { get; set; }
-
         private Dictionary<string, string> dic = new Dictionary<string, string>();
-
         public Dictionary<string, string> Dic
         {
             get

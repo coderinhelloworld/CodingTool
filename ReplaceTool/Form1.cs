@@ -3,7 +3,12 @@ using ICSharpCode.TextEditor.Document;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReplaceTool.Entity;
+using ReplaceTool.Enums;
+using ReplaceTool.Global;
 using ReplaceTool.Helper;
+using ReplaceTool.Service;
+using ReplaceTool.Setting;
+using ReplaceTool.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +24,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.Mime.MediaTypeNames;
 using Application = System.Windows.Forms.Application;
-
 namespace ReplaceTool
 {
     public partial class Form1 : Form
@@ -27,6 +31,7 @@ namespace ReplaceTool
         public Form1()
         {
             InitializeComponent();
+            Control.CheckForIllegalCrossThreadCalls = false;
             OutPutTextBox.Document.HighlightingStrategy = ICSharpCode.TextEditor.Document.HighlightingStrategyFactory.CreateHighlightingStrategy("C#");
         }
         protected override CreateParams CreateParams
@@ -39,138 +44,66 @@ namespace ReplaceTool
                 return cp;
             }
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            var dgv = this.dataGridView1;
-            ////根据Header和所有单元格的内容自动调整行的高度
-            //添加三列
-            for (int i = 0; i < 2; i++)
-            {
-                dgv.Columns.Add(new DataGridViewTextBoxColumn());
-                dgv.Columns[i].Width = 500;
-                dgv.RowTemplate.Height = 30;
-
-
-            }
-            //三列的标题
-            dgv.Columns[0].HeaderText = "需要替换的内容";
-            dgv.Columns[1].HeaderText = "替换后的内容";
-            //设置对齐方式和字体
-            dataGridView1.RowsDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView1.Font = new Font("微软雅黑", 11);
-            var settings = GetLocalSettings();
-            SettingListBox.DataSource = GetLocalSettings();
-            SettingListBox.DisplayMember = "Name";
-            //if (settings.Count > 0)
-            //{
-            //    SetDatagridViewSetting(settings[0]);
-            //}
-
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.RowHeadersVisible = false;
-            dgv.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.False;
-            dgv.ColumnHeadersHeight = 30;
-            dgv.AdvancedColumnHeadersBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.None;
-            dgv.AdvancedColumnHeadersBorderStyle.Right = DataGridViewAdvancedCellBorderStyle.None;
-
-            dgv.AdvancedCellBorderStyle.Right = DataGridViewAdvancedCellBorderStyle.Inset;
-            dgv.AdvancedCellBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.None;
-            dgv.AdvancedCellBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.None;
-            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgv.AllowUserToResizeRows = false;
-            dgv.AllowUserToResizeColumns = false;
-            //dgv.AdvancedRowHeadersBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.None;
-
-        }
-        public void SetDatagridViewSetting(Setting setting)
-        {
-            dataGridView1.Rows.Clear();
-
-            if (!string.IsNullOrEmpty(setting.Input))
-            {
-                InputTextBox.Text = setting.Input;
-            }
-            var count = 0;
-            foreach (var settingItem in setting.SettingItems)
-            {
-                dataGridView1.Rows.Add();
-                dataGridView1.Rows[count].Cells[0].Value = settingItem.NeedReplaceStr;
-                dataGridView1.Rows[count].Cells[1].Value = settingItem.ReplaceStr;
-                count++;
-            }
-
-        }
-
-        public List<Setting> GetLocalSettings()
-        {
-            var pathPrefix = Directory.GetCurrentDirectory().Replace("bin\\Debug", "");
-            var settingsStr = File.ReadAllText(pathPrefix + "/Setting/Settings.txt");
-            var res = JsonConvert.DeserializeObject<List<Setting>>(settingsStr);
-            if (res == null)
-            {
-                return new List<Setting>()
-                {
-                };
-            }
-            return res;
-        }
-
-
-
-
-        public Setting GetCurrentSetting()
-        {
-            Setting setting = new Setting()
-            {
-                SettingItems = new List<SettingItem>()
-            };
-            setting.Name = SettingNameBox.Text;
-            setting.Input = InputTextBox.Text;
-            var res = dataGridView1.Rows;
-            for (int i = 0; i < dataGridView1.RowCount - 1; i++)
-            {
-                SettingItem settingItem = new SettingItem();
-                settingItem.NeedReplaceStr = Convert.ToString(dataGridView1.Rows[i].Cells[0].Value);
-                settingItem.ReplaceStr = Convert.ToString(dataGridView1.Rows[i].Cells[1].Value);
-                setting.SettingItems.Add(settingItem);
-            }
-            return setting;
-
+            Components.ReplaceDataGridView = dataGridView1;
+            Components.SettingNameList = this.SettingListBox;
+            Components.InputTextBox = this.InputTextBox;
+            Components.OutPutTextBox = this.OutPutTextBox;
+            Components.MainForm = this;
+            MultiReplace.Init();
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {
-
-
+        {         
             var inputText = InputTextBox.Text;
+            //删除inputText中的所有的[符号,保留最后一个
+            var inputTextList = inputText.Split(new string[] { "[" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var lastStr ="["+ inputTextList.Last();
+            inputTextList.Remove(inputTextList.Last());
+            inputText = string.Join("", inputTextList) + lastStr;
+            //删除inputText中的所有的]符号,保留最后一个
+            inputTextList = inputText.Split(new string[] { "]" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            inputText = string.Join("", inputTextList) + "]";
             var sqlString = inputText.Split('[')[0];
             var paramList = inputText.Split('[')[1].Replace("]", "").Split('，');
-
-            var count = 0;
+            var count = 1;
+            if (inputText.Contains("@p0"))
+            {
+                count = 0;
+            }
             foreach (var item in paramList)
             {
-                sqlString = sqlString.Replace("@p" + count, "'" + item + "'");
+                var replaceStr = "@p" + count + ",";
+                var replaceStr2 = "@p" + count + " ";
+                var replaceStr3 = "@p" + count + ")";
+                var afterReplaceStr = "'" + item + "'" + ",";
+                var afterReplaceStr2 = "'" + item + "'" + " ";
+                var afterReplaceStr3 = "'" + item + "'" + ")";
+                if (count== paramList.Count())
+                {
+                    replaceStr = "@p" + count;
+                    afterReplaceStr = "'" + item + "'";
+                }
+                sqlString = sqlString.Replace(replaceStr, afterReplaceStr);
+                sqlString = sqlString.Replace(replaceStr2, afterReplaceStr2);
+                sqlString = sqlString.Replace(replaceStr3, afterReplaceStr3);
                 count++;
             }
-            OutPutTextBox.Text = sqlString;
+            UtilHelper.ShowMsg(sqlString);
         }
-
         public static string FirstCharToUpper(string input)
         {
             if (String.IsNullOrEmpty(input))
                 throw new ArgumentException("ARGH!");
             return input.First().ToString().ToUpper() + input.Substring(1);
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
             var contText = InputTextBox.Text;
             var jsonHelper = new JsonHelper();
-            OutPutTextBox.Text = jsonHelper.GetClassString(contText);
+            UtilHelper.ShowMsg(jsonHelper.GetClassString(contText));
         }
-
-
         private void propertyGenerateBtn_Click(object sender, EventArgs e)
         {
             var inputText = InputTextBox.Text;
@@ -182,55 +115,55 @@ namespace ReplaceTool
                 sb.AppendLine("public string " + item.ToPascal() + " {get;set;}");
                 sb.AppendLine();
             }
-            OutPutTextBox.Text = sb.ToString();
+            UtilHelper.ShowMsg(sb.ToString());
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
-            var inputText = InputTextBox.Text;
-            var col = int.Parse(colNo.Text);
-            var sb = new StringBuilder();
-            var textList = inputText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-            foreach (var text in textList)
+            try
             {
-                var items = text.Split('\t');
-                if (items.Length > 0)
+                var inputText = InputTextBox.Text;
+                if (colNo.Text.IsNullOrEmpty())
                 {
-                    sb.AppendLine("/// <summary>");
-                    sb.AppendLine($"/// {items[col]}");
-                    sb.AppendLine("/// </summary>");
-
-                    sb.AppendLine($"[JsonProperty(\"{items[0].Trim()}\")]");
-                    sb.AppendLine("public string " + items[0].ToPascal() + " {get;set;}");
-                    sb.AppendLine();
+                    var textList = inputText.Split(new string[] { "\n" }, StringSplitOptions.None);
+                    var desList = textList.Where(x => x.Contains("//")).ToList();
+                    var propertyList= textList.Where(x =>! x.Contains("//")).ToList();
+                    var sb = new StringBuilder();
+                    for (int i = 0; i < propertyList.Count(); i++)
+                    {
+                        var des = desList[i].Replace("//", "");
+                        sb.AppendLine("/// <summary>");
+                        sb.AppendLine($"/// {des}");
+                        sb.AppendLine("/// </summary>");
+                        sb.AppendLine($"[Column(\"{propertyList[i]}\", \"{des}\")]");
+                        sb.AppendLine("public string " + propertyList[i].ToPascal() + " {get;set;}");
+                        sb.AppendLine();
+                    }
+                    UtilHelper.ShowMsg(sb.ToString());
+                }else
+                {
+                    var col = int.Parse(colNo.Text);
+                    var sb = new StringBuilder();
+                    var textList = inputText.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                    foreach (var text in textList)
+                    {
+                        var items = text.Split('\t');
+                        if (items.Length > 0)
+                        {
+                            sb.AppendLine("/// <summary>");
+                            sb.AppendLine($"/// {items[col]}");
+                            sb.AppendLine("/// </summary>");
+                            sb.AppendLine($"[JsonProperty(\"{items[0].Trim()}\")]");
+                            sb.AppendLine("public string " + items[0].ToPascal() + " {get;set;}");
+                            sb.AppendLine();
+                        }
+                    }
+                    UtilHelper.ShowMsg(sb.ToString());
                 }
-
             }
-            OutPutTextBox.Text = sb.ToString();
-        }
-
-
-
-        private void fromNumberBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void RefreshSetting()
-        {
-            var settingList = GetLocalSettings();
-            SettingListBox.DataSource = GetLocalSettings();
-            SettingListBox.DisplayMember = "Name";
-            if (settingList.Count > 0)
+            catch (Exception)
             {
-                SetDatagridViewSetting(settingList[0]);
+                throw;
             }
-
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -249,11 +182,8 @@ namespace ReplaceTool
                     sb.AppendLine("/// </summary>");
                     sb.AppendLine("[DataMember]");
                     sb.AppendLine($" private String {items[0].Trim()};");
-
-
                     sb.AppendLine();
                 }
-
             }
             foreach (var text in textList)
             {
@@ -270,25 +200,18 @@ namespace ReplaceTool
                                 }}";
                     sb.AppendLine(str);
                 }
-
             }
-            OutPutTextBox.Text = sb.ToString();
+            UtilHelper.ShowMsg(sb.ToString());
         }
-
         private void iconButton1_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
-
         public class Translate
         {
-
             public string Value { get; set; }
             public string Key { get; set; }
-
         }
-
-
         public string GetTranslate(string input)
         {
             var res = AzureTranslateHelper.AzureTranaslte(input, new string[] { "en" }).Result;
@@ -303,10 +226,9 @@ namespace ReplaceTool
             }
             return resStr;
         }
-
         public void GenerateToolBarText()
         {
-            OutPutTextBox.Text = "";
+            UtilHelper.ShowMsg("");
             var inputText = InputTextBox.Text;
             inputText = GetToolBarTranslateContent(inputText);
             var tableName = new Regex(@"\$\(""\#(\w+)""\)").Match(inputText).Value.Replace(@"$(""#", "").Replace(@""")", "");
@@ -316,124 +238,112 @@ namespace ReplaceTool
                 type = 2;
             }
             inputText = inputText.Replace(@"$("".lazyLoad"").css(""visibility"", ""visible"")", $"regPermission(\"{tableName}\", {type}); \r\n     $(\".lazyLoad\").css(\"visibility\",\"visible\")");
-            OutPutTextBox.Text = inputText;
-
+            UtilHelper.ShowMsg(inputText);
         }
-
         private void GenerateToolBarTextBtn_Click(object sender, EventArgs e)
         {
             GenerateToolBarText();
         }
-
         [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
         [DllImport("user32.dll")]
         public static extern bool SendMessage(IntPtr hwdn, int wMsg, int mParam, int IParam);
-
-
         private void panel1_MouseDown_1(object sender, MouseEventArgs e)
         {
-
             ReleaseCapture();
             SendMessage(this.Handle, 0x0112, 0xF012, 0);
         }
-
-        private void htmlTextBox_TextChanged(object sender, EventArgs e)
-        {
-            GenerateToolBarText();
-        }
-
+        /// <summary>
+        /// 替换探秘
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReplaceBtn_Click_1(object sender, EventArgs e)
         {
-            var settings = GetCurrentSetting();
+            var settings = SettingHelper.GetCurrentSetting();
+            var saveGroupSettingName = settings.SettingItems.Where(x=>x.Group!="").Select(x => x.Group);
+            //获取saveGroupSettingName中相同的数量
+
+
+
             var inputText = InputTextBox.Text;
             if (inputText.Length > 0)
             {
+                foreach (var name in saveGroupSettingName)
+                {
+                    var saveGroupSetting = settings.SettingItems.Where(x => x.Group == name);
+                    foreach (var item in saveGroupSetting)
+                    {
+
+
+
+                    }
+                }
+
+
+
                 foreach (var setting in settings.SettingItems)
                 {
                     if (setting.NeedReplaceStr.Length > 0)
                     {
-                        inputText = inputText.Replace(setting.NeedReplaceStr, setting.ReplaceStr);
+                        if (setting.ReplaceType ==ReplaceWay.正则表达式替换.ToString())
+                        {
+                            Regex reg = new Regex(setting.NeedReplaceStr);
+                            var res = reg.Match(inputText);
+                            inputText = inputText.Replace(res.ToString(), "");
+                        }
+                        if (setting.ReplaceType == ReplaceWay.替换.ToString())
+                        {
+                            inputText = inputText.Replace(setting.NeedReplaceStr, setting.ReplaceStr);
+                        }
                     }
-
                 }
-                OutPutTextBox.Text = inputText;
+                UtilHelper.ShowMsg(inputText);
             }
         }
-
         private void SettingListBox_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            SettingNameBox.Text = SettingListBox.Text;
-            var settings = GetLocalSettings();
-            var setting = settings.FirstOrDefault(x => x.Name == SettingListBox.Text);
+        {  
+            var settings = SettingHelper.GetLocalSettings();
+            var currentSettingName = SettingListBox.Text;
+            var setting = settings.FirstOrDefault(x => x.Name == currentSettingName);
             if (setting != null)
             {
-                SetDatagridViewSetting(setting);
+                MultiReplace.SetDatagridViewSetting(setting);
             }
             else
             {
                 InputTextBox.Text = "";
             }
-            ReplaceBtn_Click_1(sender, e);
         }
 
+        #region 多字符串替换
+        /// <summary>
+        /// 保存配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtdAddRow_Click_1(object sender, EventArgs e)
         {
-            var setting = GetCurrentSetting();
-
-            List<Setting> settings = GetLocalSettings();
-            if (settings == null)
-            {
-                settings.Add(setting);
-            }
-            else
-            {
-                var existSettings = settings.FirstOrDefault(x => x.Name == setting.Name);
-                if (existSettings == null)
-                {
-                    settings.Add(setting);
-                }
-                else
-                {
-                    settings.Remove(existSettings);
-                    settings.Add(setting);
-                }
-            }
-            var path = Directory.GetCurrentDirectory().Replace("bin\\Debug", "");
-            File.WriteAllText(path + "/Setting/Settings.txt", JsonConvert.SerializeObject(settings));
-            RefreshSetting();
+            MultiReplace.SaveSetting();
         }
-
+        /// <summary>
+        /// 删除配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ConfigDelBtn_Click(object sender, EventArgs e)
         {
-            var setting = GetCurrentSetting();
-
-            List<Setting> settings = GetLocalSettings();
-            if (settings == null)
-            {
-            }
-            else
-            {
-                var existSettings = settings.FirstOrDefault(x => x.Name == setting.Name);
-                if (existSettings == null)
-                {
-                }
-                else
-                {
-                    settings.Remove(existSettings);
-                }
-            }
-            var path = Directory.GetCurrentDirectory().Replace("bin\\Debug", "");
-            File.WriteAllText(path + "/Setting/Settings.txt", JsonConvert.SerializeObject(settings));
-            RefreshSetting();
+            MultiReplace.DeleteSetting();
         }
+
+
+        #endregion
 
         private void iconButton1_MouseHover(object sender, EventArgs e)
         {
             CloseBtn.IconColor = Color.FromArgb(232, 17, 35);
             this.CloseBtn.IconChar = FontAwesome.Sharp.IconChar.Close;
         }
-
         private void CloseBtn_MouseLeave(object sender, EventArgs e)
         {
             CloseBtn.IconColor = Color.FromArgb(253, 96, 88);
@@ -452,20 +362,15 @@ namespace ReplaceTool
             foreach (var item in textList)
             {
                 sb.AppendLine(item.ToPascal());
-
             }
-            OutPutTextBox.Text = sb.ToString();
+            UtilHelper.ShowMsg(sb.ToString());
         }
-
         private void button5_Click_1(object sender, EventArgs e)
         {
-
             var inputText = InputTextBox.Text;
             var res = inputText.Replace("\r\n", "").Replace("\"", "\\\"").Replace(" ", "");
-            OutPutTextBox.Text = res;
-
+            UtilHelper.ShowMsg(res);
         }
-
         private void contactTxtBtn_Click_1(object sender, EventArgs e)
         {
             var contText = contactText.Text;
@@ -482,10 +387,8 @@ namespace ReplaceTool
             }
             var res = sb.ToString();
             res = res.Substring(0, res.Length - 1);
-            OutPutTextBox.Text = res;
-
+            UtilHelper.ShowMsg(res);
         }
-
         private void AddItSelf_Click_1(object sender, EventArgs e)
         {
             var inputText = InputTextBox.Text;
@@ -496,13 +399,11 @@ namespace ReplaceTool
             {
                 outputStr += inputText.Replace(fromNumber.ToString(), (i + 1).ToString()) + "\r\n";
             }
-            OutPutTextBox.Text = outputStr;
+            UtilHelper.ShowMsg(outputStr);
         }
-
-
         private void AddAuthCodeBtn_Click(object sender, EventArgs e)
         {
-            OutPutTextBox.Text = "";
+            UtilHelper.ShowMsg("");
             var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);
             foreach (var item in filePathList)
             {
@@ -510,14 +411,10 @@ namespace ReplaceTool
                 {
                     continue;
                 }
-
                 var html = File.ReadAllText(item);
                 //获取名称
                 var toolbarAndIdHtml = new Regex(@"\$\(""\#([\s\S]*)toolbar").Match(html).Value;
                 var tableName = new Regex(@"\$\(""\#(\w+)""\)").Match(toolbarAndIdHtml).Value.Replace(@"$(""#", "").Replace(@""")", "");
-
-
-
                 //获取toolbar信息并添加id和翻译
                 var toolbarContent = new Regex(@"toolbar:([\s\S]*?)\]").Match(html).Value;
                 if (string.IsNullOrEmpty(toolbarContent))
@@ -525,19 +422,15 @@ namespace ReplaceTool
                     continue;
                 }
                 var changedToolbarContent = GetToolBarTranslateContent(toolbarContent);
-
                 //权限验证函数
                 var lazyLoadString = @"$("".lazyLoad"").css(""visibility"", ""visible"")";
                 var regPermissionCode = GetRegPermissionCode(toolbarAndIdHtml, tableName);
-
                 //替换文本
                 html = html.Replace(toolbarContent, changedToolbarContent).Replace(lazyLoadString, regPermissionCode);
                 File.WriteAllText(item, html, Encoding.UTF8);
                 OutPutTextBox.Text += item + "\r\n";
             }
-
         }
-
         public string GetToolBarTranslateContent(string input)
         {
             var translateList = new List<Translate>();
@@ -549,7 +442,6 @@ namespace ReplaceTool
             translateList.Add(new Translate() { Key = "导出", Value = "Export" });
             translateList.Add(new Translate() { Key = "导入", Value = "Import" });
             translateList.Add(new Translate() { Key = "详细", Value = "Detail" });
-
             var inputText = input;
             //匹配toolbar文本内容
             var regStr = @"text:.*?,";
@@ -559,7 +451,6 @@ namespace ReplaceTool
                 var text = item.ToString();
                 var res = Regex.Match(text, "'.*'");
                 var needTranslateKey = res.ToString().Trim('\'').Trim();
-
                 var keyTranlate = translateList.FirstOrDefault(x => x.Key == needTranslateKey);
                 if (keyTranlate != null)
                 {
@@ -573,10 +464,8 @@ namespace ReplaceTool
             }
             return inputText;
         }
-
         public string GetRegPermissionCode(string toolbarAndIdContent, string tableName)
         {
-
             var type = 1;
             if (toolbarAndIdContent.Contains("treegrid"))
             {
@@ -585,29 +474,23 @@ namespace ReplaceTool
             var regPermissionCode = $"regPermission(\"{tableName}\", {type}); \r\n            $(\".lazyLoad\").css(\"visibility\",\"visible\")";
             return regPermissionCode;
         }
-
         private void CheckRegCodeBtn_Click(object sender, EventArgs e)
         {
-            OutPutTextBox.Text = "";
+            UtilHelper.ShowMsg("");
             var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);
             foreach (var item in filePathList)
             {
-
                 var html = File.ReadAllText(item);
                 if (html.Contains("editor: { type: 'combobox'") && html.Contains("multiple: true") && html.Contains("treegrid"))
                 {
                     OutPutTextBox.Text += item + "\r\n";
                 }
-
-
             }
             OutPutTextBox.Text += "Ending." + "\r\n";
         }
-
         private void PdmGetCSharpCodeBtn_Click(object sender, EventArgs e)
         {
             var tableName = TableNameBox.Text;
-
             var inputText = InputTextBox.Text;
             if (tableName.IsNullOrEmpty())
             {
@@ -619,7 +502,6 @@ namespace ReplaceTool
                 MessageBox.Show("输入内容不能为空");
                 return;
             }
-
             var sb = new StringBuilder();
             var textList = inputText.Split(new string[] { "\n" }, StringSplitOptions.None);
             foreach (var text in textList)
@@ -634,43 +516,33 @@ namespace ReplaceTool
                     sb.AppendLine("public string " + items[1].ToPascal() + " {get;set;}");
                     sb.AppendLine();
                 }
-
             }
             var res = $@"[Table(""{tableName}"", ""餐次信息"")]
  public class {tableName.ToPascal()}Eo : FrameEo
  {{
                    {sb.ToString()}
-        
              }}";
-            OutPutTextBox.Text = res;
+            UtilHelper.ShowMsg(res);
         }
         public static string GetStrFields(string strWords)
         {
-
             Regex replaceSpace = new Regex(@"\s{1,}", RegexOptions.IgnoreCase);
-
             return replaceSpace.Replace(strWords, " ").Trim();
-
         }
-
         private void MinBtn_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
         }
-
-
         private void MinBtn_MouseHover(object sender, EventArgs e)
         {
             MinBtn.IconColor = Color.FromArgb(255, 128, 0);
             this.MinBtn.IconChar = FontAwesome.Sharp.IconChar.Minus;
         }
-
         private void MinBtn_MouseLeave(object sender, EventArgs e)
         {
             MinBtn.IconColor = Color.FromArgb(251, 190, 47);
             this.MinBtn.IconChar = FontAwesome.Sharp.IconChar.Circle;
         }
-
         /// <summary>
         /// 文件更改成UTF-8格式
         /// </summary>
@@ -678,42 +550,85 @@ namespace ReplaceTool
         /// <param name="e"></param>
         private void ChangToUtf8Btn_Click(object sender, EventArgs e)
         {
-            var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);
-            foreach (var item in filePathList)
-            {
-
-                var html = File.ReadAllText(item, FileHelper.GetType(item));
-                OutPutTextBox.Text += item + "\r\n";
-                File.WriteAllText(item, html, Encoding.GetEncoding("UTF-8"));
-
-            }
+            var act = new Action(ChangeFileToUTF8);
+            act.BeginInvoke(ar => act.EndInvoke(ar), null);
         }
-
-        private void JsonFormatBtn_Click(object sender, EventArgs e)
+        private void ChangeFileToUTF8()
         {
+            UtilHelper.ShowMsg("");
             try
             {
-                //JObject.ToString()方法会内部调用格式化，所以直接使用即可
-                string jsonStr = InputTextBox.Text.Trim();
-                //判读是数组还是对象
-                if (jsonStr.StartsWith("["))
+                var filePathList = FileHelper.GetDirAllFiles(InputTextBox.Text);
+                foreach (var path in filePathList)
                 {
-                    JArray jobj = JArray.Parse(jsonStr);
-                    OutPutTextBox.Text = jobj.ToString();
+                    var html = File.ReadAllText(path, FileHelper.GetType(path));
+                    UtilHelper.ShowMsg(path + "\r\n", false);
+                    var utf8WithoutBom = new System.Text.UTF8Encoding(false);//使用构造函数布尔参数指定是否含BOM头，示例false为不含。
+                    File.WriteAllText(path, html, utf8WithoutBom);
                 }
-                else if (jsonStr.StartsWith("{"))
-                {
-                    JObject jobj = JObject.Parse(jsonStr);
-                    OutPutTextBox.Text = jobj.ToString();
-                }
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show("错误的JSON");
-
+                MessageBox.Show(ex.ToString());
             }
         }
-
+        private void JsonFormatBtn_Click(object sender, EventArgs e)
+        {
+            Task task1 = Task.Run(() =>
+            {
+                try
+                {
+                    string jsonStr = InputTextBox.Text.Trim();
+                    var res = new JsonHelper().ConvertJsonString(jsonStr);
+                    UtilHelper.ShowMsg(res);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            });
+        }
+        private void PageGenerateBtn_Click(object sender, EventArgs e)
+        {
+            var path = Environment.CurrentDirectory.Replace(@"\bin\Debug", "") + "/HtmlModels/Index.text";
+            var html = File.ReadAllText(path);
+            var pagePath = PagePathBox.Text;
+            html = html.Replace("{{AddHtmlPath}}", pagePath + "/" + PageTableNameBox.Text + "Add.htm");
+            html = html.Replace("{{EditHtmlPath}}", pagePath + "/" + PageTableNameBox.Text + "Edit.htm");
+            html = html.Replace("{{HandlerPath}}", HandlerPathBox.Text);
+            html = html.Replace("{{TableTitle}}", TableTitleBox.Text);
+            UtilHelper.ShowMsg(html);
+        }
+        private void HtmlFormatterBtn_Click(object sender, EventArgs e)
+        {
+            Task task1 = Task.Run(() =>
+            {
+                try
+                {
+                    string jsonStr = InputTextBox.Text.Trim();
+                    var res = HtmlCodeFormat.Format(jsonStr);
+                    UtilHelper.ShowMsg(res);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            });
+        }
+        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            ComboBox combo = e.Control as ComboBox;
+            if (combo != null)
+            {
+                combo.SelectedIndexChanged += new EventHandler(ComboBox_SelectedIndexChanged);
+            }
+        }
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ComboBox combo = sender as ComboBox;
+            string selectedItem = combo.Text;//拿到选择后的值
+            if (dataGridView1.CurrentCell != null)
+                dataGridView1.CurrentCell.Value = selectedItem;
+        }
     }
 }
